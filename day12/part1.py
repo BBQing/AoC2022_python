@@ -43,23 +43,18 @@ class Map:
         current_nodes.add(self.start)
         visited_nodes.add(self.start)
         while self.end not in visited_nodes:
-            # print(f"cycle {self.counter} {current_nodes}")
-            if self.end in visited_nodes:
-                print("Something")
             self.counter += 1
             for node in current_nodes:
                 for candidate in self.candidate_nodes(node):
                     if candidate not in visited_nodes:
                         candidates.add(candidate)
             yield 1
-            print(len(visited_nodes), len(current_nodes), len(candidates), set(LETTERS[self.map.get(node)] for node in candidates))
             visited_nodes |= current_nodes
 
             current_nodes = candidates
             if not candidates:
                 break
             if self.end in candidates:
-                print("here")
                 break
             candidates = set()
 
@@ -78,9 +73,4 @@ if __name__ == '__main__':
     # PATH = 'day12/test.txt'
 
     data = Map(read_file(PATH))
-    # print(LETTERS)
-    # print(data.map)
-    # print(data.start)
-    # print(data.end)
-    # print(LETTERS[19])
     print(sum(data))
