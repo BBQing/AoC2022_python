@@ -1,6 +1,6 @@
 
 import re
-from itertools import cycle, islice
+from itertools import islice
 
 cmd_pattern = re.compile(r'addx (-?\d+)')
 
@@ -15,14 +15,6 @@ def read_file(path):
             else:
                 yield None
 
-def batched(iterable, n):
-    "Batch data into lists of length n. The last batch may be shorter."
-    # batched('ABCDEFG', 3) --> ABC DEF G
-    if n < 1:
-        raise ValueError('n must be at least one')
-    it = iter(iterable)
-    while (batch := list(islice(it, n))):
-        yield batch
 
 class Register:
 
@@ -47,18 +39,17 @@ class Register:
         for cmd in cmds:
             yield from self.execute(cmd)
 
-    def draw_pixel(self, pos):
-        if abs(pos - self.X) <= 1:
-            return '#'
-        else:
-            return '.'
 
-    def pixels(self, PATH):
-        
-        register_states = zip(cycle(range(40)), self.commands(read_file(PATH)))
-        for ind, _ in register_states:
-            yield self.draw_pixel(ind)
-        
+def signal_stength(input):
+    ind, X = input
+    return ind * X
+
+
+def signal_strengths(PATH):
+    register = Register()
+    register_states = enumerate(register.commands(read_file(PATH)), 1)
+
+    return sum(map(signal_stength, islice(register_states, 19, 220, 40)))
     
 
 
@@ -66,7 +57,6 @@ if __name__ == '__main__':
     PATH = 'day10/data.txt'
     # PATH = 'day10/test.txt'
 
-    register = Register()
+    
 
-    for line in batched(register.pixels(PATH), 40):
-        print(''.join(line))
+    print(signal_strengths(PATH))
